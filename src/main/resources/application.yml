@@ -1,0 +1,12 @@
+spring:
+  rabbitmq:
+    host: localhost
+    port: 5672
+    ssl:
+      enabled: false
+    username: guest
+    password: guest
+  application:
+    name: HelloWorldMessageQueue
+server:
+  port: 8080
