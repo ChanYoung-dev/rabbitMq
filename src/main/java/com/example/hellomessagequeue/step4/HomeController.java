@@ -1,4 +1,4 @@
-package com.example.hellomessagequeue.step3;
+package com.example.hellomessagequeue.step4;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -11,5 +11,11 @@ public class HomeController {
   public String home(Model model) {
     model.addAttribute("message", "Welcome to RabbitMQ Sample!");
     return "home"; // src/main/resources/templates/home.html 파일을 찾음
+  }
+
+  @GetMapping("/news")
+  public String news(Model model) {
+    model.addAttribute("message", "Welcome to RabbitMQ News Sample!");
+    return "news";
   }
 }
