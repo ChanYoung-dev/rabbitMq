@@ -6,6 +6,14 @@ spring:
       enabled: false
     username: guest
     password: guest
+    listener:
+      simple:
+        retry:
+          enabled: true # 재시도 활성화
+          initial-interval: 1000 # 첫 재시도 대기 시간 1초
+          max-interval: 1000 #최 시도간 최대 대기시간
+          max-retries: 3
+        default-requeue-rejected: false
   application:
     name: HelloWorldMessageQueue
 server:

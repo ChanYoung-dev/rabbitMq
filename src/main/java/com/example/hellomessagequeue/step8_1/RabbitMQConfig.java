@@ -4,52 +4,46 @@ import org.springframework.amqp.core.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-
 @Configuration
 public class RabbitMQConfig {
-  // 큐, 교환기, 라우팅 키 이름 정의
+
   public static final String ORDER_COMPLETED_QUEUE = "orderCompletedQueue";
   public static final String DLQ = "deadLetterQueue";
   public static final String ORDER_TOPIC_EXCHANGE = "orderExchange";
   public static final String ORDER_TOPIC_DLX = "deadLetterExchange";
   public static final String DEAD_LETTER_ROUTING_KEY = "dead.letter";
-
-  // 원래 큐에 연결된 Topic Exchange
   @Bean
-  public TopicExchange orderExchange() {
+
+  public TopicExchange exchange() {
     return new TopicExchange(ORDER_TOPIC_EXCHANGE);
   }
 
-  // Dead Letter Exchange
   @Bean
   public TopicExchange deadLetterExchange() {
     return new TopicExchange(ORDER_TOPIC_DLX);
   }
 
-  // 원래 큐 설정
   @Bean
-  public Queue orderQueue() {
+  public Queue queue() {
     return QueueBuilder.durable(ORDER_COMPLETED_QUEUE)
-      .withArgument("x-dead-letter-exchange", ORDER_TOPIC_DLX) // DLX 설정
-      .withArgument("x-dead-letter-routing-key", DEAD_LETTER_ROUTING_KEY) // DLQ로 이동할 라우팅 키 설정
+      .withArgument("x-dead-letter-exchange", ORDER_TOPIC_DLX)
+      .withArgument("x-dead-letter-routing-key", DEAD_LETTER_ROUTING_KEY)
       .build();
   }
 
-  // Dead Letter Queue 설정
   @Bean
   public Queue deadLetterQueue() {
-    return QueueBuilder.durable(DLQ).build();
+    return new Queue(DLQ);
   }
 
-  // 원래 큐와 Exchange 바인딩
   @Bean
-  public Binding orderQueueBinding() {
-    return BindingBuilder.bind(orderQueue()).to(orderExchange()).with("order.completed");
+  public Binding binding() {
+
+    return BindingBuilder.bind(queue()).to(exchange()).with("order.completed.*");
   }
 
-  // Dead Letter Queue와 Dead Letter Exchange 바인딩
   @Bean
-  public Binding deadLetterQueueBinding() {
+  public Binding deadLetterBinding() {
     return BindingBuilder.bind(deadLetterQueue()).to(deadLetterExchange()).with(DEAD_LETTER_ROUTING_KEY);
   }
 

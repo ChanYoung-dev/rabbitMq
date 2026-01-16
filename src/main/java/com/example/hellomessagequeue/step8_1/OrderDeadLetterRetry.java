@@ -21,25 +21,27 @@ public class OrderDeadLetterRetry {
   }
 
   @RabbitListener(queues = RabbitMQConfig.DLQ)
-  public void processDeadLetter(String message) {
-    System.out.println("[DLQ Received]: " + message);
-
+  public void processDlqMessage(String failedMessage) {
     try {
       // "fail" 메시지를 수정하여 성공적으로 처리되도록 변경
-      if ("fail".equalsIgnoreCase(message)) {
-        message = "success";
-        System.out.println("[DLQ] Message fixed: " + message);
+      if ("fail".equalsIgnoreCase(failedMessage)) {
+        failedMessage = "success";
+        System.out.println("[DLQ] Message fixed: " + failedMessage);
       } else {
         // 이미 수정된 메시지는 다시 처리하지 않음
-        System.err.println("[DLQ] Message already fixed. Ignoring: " + message);
+        System.err.println("[DLQ] Message already fixed. Ignoring: " + failedMessage);
         return;
       }
 
-      // 수정된 메시지를 원래 큐로 다시 전송
-      rabbitTemplate.convertAndSend(RabbitMQConfig.ORDER_TOPIC_EXCHANGE, "order.completed", message );
-      System.out.println("[DLQ] Message requeued to original queue: " + message);
+      // 수정된 메시지를 원래 큐로 재전송
+      rabbitTemplate.convertAndSend(RabbitMQConfig.ORDER_TOPIC_EXCHANGE,
+        "order.completed.shipping",
+        failedMessage);
+
+      System.out.println("Message successfully reprocessed : " + failedMessage);
+
     } catch (Exception e) {
-      System.err.println("[DLQ] Failed to reprocess message: " + e.getMessage());
+      System.err.println("Error processing DLQ message : " + e);
     }
   }
 }
