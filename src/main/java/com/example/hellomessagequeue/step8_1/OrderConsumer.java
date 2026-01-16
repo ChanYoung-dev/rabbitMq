@@ -29,7 +29,7 @@ public class OrderConsumer {
       } catch (Exception e) {
         if (context.getRetryCount() >= 2) {
           rabbitTemplate.convertAndSend(RabbitMQConfig.ORDER_TOPIC_DLX,
-            RabbitMQConfig.DEAD_LETTER_ROUTING_KEY, message); //nack
+            RabbitMQConfig.DEAD_LETTER_ROUTING_KEY, message); //= 이 코드가 nack과 같은 기능을 수행
         } else {
           throw e; // 알아서 reject를 보냄
         }

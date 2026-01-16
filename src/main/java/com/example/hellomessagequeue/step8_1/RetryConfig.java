@@ -17,7 +17,7 @@ public class RetryConfig {
     retryPolicy.setMaxAttempts(3);
     // 백오프 정책 설정: 재시도 간격 1초
     FixedBackOffPolicy backOffPolicy = new FixedBackOffPolicy();
-    backOffPolicy.setBackOffPeriod(2000L);
+    backOffPolicy.setBackOffPeriod(10000L);
     retryTemplate.setRetryPolicy(retryPolicy);
     retryTemplate.setBackOffPolicy(backOffPolicy);
 
