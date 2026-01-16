@@ -1,4 +1,4 @@
-package com.example.hellomessagequeue.step7;
+package com.example.hellomessagequeue.step8_1;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,10 +13,10 @@ public class OrderController {
     this.orderProducer = orderProducer;
   }
 
-
   @GetMapping
   public ResponseEntity<String> sendOrderMessage(@RequestParam String message) {
-    orderProducer.sendShpping(message);
+
+    orderProducer.sendShipping(message);
     return ResponseEntity.ok("Order Completed Message sent: " + message);
   }
 }
